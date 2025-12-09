@@ -1,18 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyActor.h"
-#include "ShootingGameModeBase.h"
+#include "HpItem.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
 #include "PlayerPawn.h"
 #include "Kismet/GameplayStatics.h"
 
-class AShootingGameModeBase;
+
 
 // Sets default values
-AEnemyActor::AEnemyActor()
+AHpItem::AHpItem()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -28,26 +27,14 @@ AEnemyActor::AEnemyActor()
 	meshComp->SetupAttachment(boxComp);
 
 	boxComp->SetCollisionProfileName(TEXT("Enemy"));
-
-
-
-	
 }
 
 // Called when the game starts or when spawned
-void AEnemyActor::BeginPlay()
+void AHpItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AShootingGameModeBase* GameMode = Cast<AShootingGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GameMode) {
-		enemyMaxHp += GameMode->gameLevel;
-	}
-
-	enemyCurHp = enemyMaxHp;
-
-
+	/*
 	int32 drawResult = FMath::RandRange(1, 100);
 
 	if (drawResult <= traceRate) {
@@ -57,25 +44,22 @@ void AEnemyActor::BeginPlay()
 
 		//Object.FindObjectsOfType<T>()와 똑같이 구현가능
 
-		for (TActorIterator<APlayerPawn> player(GetWorld()); player; ++player){
+		for (TActorIterator<APlayerPawn> player(GetWorld()); player; ++player) {
 
 			if (player->GetName().Contains(TEXT("BP_PlayerPawn"))) {
 				dir = player->GetActorLocation() - GetActorLocation();
 				dir.Normalize();
 			}
-
-			
 		}
-
-
-	}
-	else {
+	}*/
+	
 		dir = GetActorForwardVector();
+		//아이템은 무조건 아래로 떨어짐
 
 
-	}
+	
 
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemyActor::OnEnemyOverlap);
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AHpItem::OnItemOverlap);
 
 
 
@@ -83,7 +67,7 @@ void AEnemyActor::BeginPlay()
 }
 
 // Called every frame
-void AEnemyActor::Tick(float DeltaTime)
+void AHpItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -91,12 +75,10 @@ void AEnemyActor::Tick(float DeltaTime)
 	FVector newLocation = GetActorLocation() + dir * moveSpeed * DeltaTime;
 
 	SetActorLocation(newLocation);
-
-
 }
 
 
-void AEnemyActor::OnEnemyOverlap(
+void AHpItem::OnItemOverlap(
 	UPrimitiveComponent* OverlappedComp,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
@@ -107,37 +89,10 @@ void AEnemyActor::OnEnemyOverlap(
 {
 	APlayerPawn* player = Cast<APlayerPawn>(OtherActor);
 	{
-		/*
-		if (player != nullptr) {
-			OtherActor->Destroy();
-
-			AShootingGameModeBase* currentGameMode = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
-
-
-			if (currentGameMode != nullptr) {
-
-
-				currentGameMode->ShowMenu();
-
-			}
-
+	
+		if (player) {
+				player->TakeHeal(1);
+				Destroy();
 		}
-		*/
-
-		if (OtherActor && OtherActor->IsA(APlayerPawn::StaticClass()))
-		{
-
-			UGameplayStatics::ApplyDamage(
-				OtherActor,      // 피해 대상 (PlayerPawn)
-				1.0f,            // 피해량
-				GetInstigatorController(), // 가해자 컨트롤러
-				this,            // 가해자 액터 (EnemyActor)
-				nullptr
-			);
-		}
-
-
-
-		Destroy();
 	}
 }

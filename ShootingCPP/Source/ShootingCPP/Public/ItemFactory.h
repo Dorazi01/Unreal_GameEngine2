@@ -4,19 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EnemyFactory.generated.h"
+#include "ItemFactory.generated.h"
 
-class AEnemyActor;
-
+class AHpItem;
 
 UCLASS()
-class SHOOTINGCPP_API AEnemyFactory : public AActor
+class SHOOTINGCPP_API AItemFactory : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AEnemyFactory();
+	AItemFactory();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,18 +25,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	UPROPERTY(EditAnywhere)
 	float delayTime = 2.0f;
 
-	
-
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AEnemyActor> enemy;
-
+	TSubclassOf<AHpItem> item;
 
 
 private:
 	float currentTime = 0.0f;
-
 };

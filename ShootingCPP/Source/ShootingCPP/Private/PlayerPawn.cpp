@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
 #include "Components/ArrowComponent.h"
+#include "ShootingGameModeBase.h"
 #include "Bullet.h"
 #include "Kismet/GamePlayStatics.h"
 
@@ -141,4 +142,61 @@ void APlayerPawn::Fire() {
 
 	UGameplayStatics::PlaySound2D(GetWorld(), fireSound);
 
+}
+
+float APlayerPawn::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	
+	curHp = FMath::Clamp(curHp - (int32)DamageAmount, 0, maxHp);
+
+	OnHealthChangedDelegate.Broadcast(curHp);
+
+	UE_LOG(LogTemp, Warning, TEXT("플레이어 체력: %d"), curHp);
+	AShootingGameModeBase* currentGameMode = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	if (currentGameMode != nullptr)
+    {
+        // 3. UI 업데이트 호출 (여기에 넣으면 됩니다!)
+        // 피격 즉시 UI를 업데이트하여 바뀐 체력을 표시합니다.
+        currentGameMode->PrintHealth();
+    }
+
+	if (curHp <= 0)
+	{
+		
+
+		if (currentGameMode != nullptr) {
+
+
+			currentGameMode->ShowMenu();
+
+		}
+
+		Destroy();
+
+	}
+
+	return DamageAmount;
+}
+
+
+float APlayerPawn::TakeHeal(float HealAmount)
+{
+
+	curHp = FMath::Clamp(curHp + (int32)HealAmount, 0, maxHp);
+
+	OnHealthChangedDelegate.Broadcast(curHp);
+
+	UE_LOG(LogTemp, Warning, TEXT("플레이어 체력: %d"), curHp);
+	AShootingGameModeBase* currentGameMode = Cast<AShootingGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	if (currentGameMode != nullptr)
+	{
+		
+		currentGameMode->PrintHealth();
+	}
+
+	
+
+	return HealAmount;
 }

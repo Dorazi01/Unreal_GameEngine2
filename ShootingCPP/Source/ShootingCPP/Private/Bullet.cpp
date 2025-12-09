@@ -63,19 +63,26 @@ void ABullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 
 	if (enemy != nullptr) {
-		OtherActor->Destroy();
+		if (enemy->enemyCurHp <= 0) {
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionFX, GetActorLocation(), GetActorRotation());
 
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionFX, GetActorLocation(), GetActorRotation());
+			TObjectPtr<AGameModeBase> currentMode = GetWorld()->GetAuthGameMode();
 
-		TObjectPtr<AGameModeBase> currentMode = GetWorld()->GetAuthGameMode();
-			 
-		TObjectPtr<AShootingGameModeBase> currentGameModeBase = Cast<AShootingGameModeBase>(currentMode);
+			TObjectPtr<AShootingGameModeBase> currentGameModeBase = Cast<AShootingGameModeBase>(currentMode);
 
 
-		if (currentGameModeBase != nullptr) {
+			if (currentGameModeBase != nullptr) {
 
-			currentGameModeBase->AddScore(1);
+				currentGameModeBase->AddScore(1);
+			}
+			OtherActor->Destroy();
 		}
+		else {
+			enemy->enemyCurHp -= 1;
+		}
+		
+
+		
 
 	}
 

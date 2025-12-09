@@ -11,6 +11,8 @@ class UMainWidget;
 
 class UMenuWidget;
 
+class APlayerPawn;
+
 /**
  * 
  */
@@ -21,6 +23,7 @@ class SHOOTINGCPP_API AShootingGameModeBase : public AGameModeBase
 
 public:
 	void AddScore(int32 point);
+	void PrintHealth();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UMainWidget> mainWidget;
@@ -30,8 +33,14 @@ public:
 
 	void ShowMenu();
 
+	float curTime;
+
+	int32 gameLevel;
+
 protected:
+
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 
 
@@ -44,6 +53,8 @@ private:
 	TObjectPtr<UMenuWidget> menuUI;
 
 	void PrintScore();
+
+	
 
 	
 

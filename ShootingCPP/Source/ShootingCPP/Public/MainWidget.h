@@ -22,8 +22,15 @@ public :
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	TObjectPtr<UTextBlock> scoreData;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	TObjectPtr<UTextBlock> healthText;
 
-	
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	TObjectPtr<UTextBlock> healthData;
+
+	//UFUNCTION(BlueprintCallable)
+	//void UpdateHealthDisplay(int32 NewHealth);
 
 
 };

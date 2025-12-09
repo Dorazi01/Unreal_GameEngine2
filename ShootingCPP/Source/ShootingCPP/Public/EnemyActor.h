@@ -36,6 +36,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 traceRate = 50;
 
+
+	UPROPERTY(EditAnywhere)
+	int32 enemyCurHp = 1;
+	int32 enemyMaxHp = 1;
+
 	UPROPERTY(EditDefaultsOnly)
 	float moveSpeed = 800.0f;
 
@@ -46,5 +51,6 @@ public:
 	
 private:
 	FVector dir;
+	
 
 };
